@@ -93,43 +93,38 @@ function toggleDurationInsteadWeight() {
 
     <v-card elevation="16">
       <v-card-text>
-              <v-combobox
-                v-model="currentExerciseName"
-                :items="exercisesStore.exercises.map(({ name }) => name)"
-                label="Exercise"
-              ></v-combobox>
-              <v-text-field
-                v-model="currentReps"
-                type="number"
-                label="Reps"
-                suffix="x"
-              ></v-text-field>
-              <v-text-field
-                v-if="currentDurationInsteadWeight"
-                v-model="currentDuration"
-                type="number"
-                label="Duration"
-                suffix="mins"
-              >
-                <template v-slot:append>
-                  <v-btn
-                    icon="mdi-weight"
-                    variant="tonal"
-                    density="comfortable"
-                    @click="() => toggleDurationInsteadWeight()"
-                  ></v-btn>
-                </template>
-              </v-text-field>
-              <v-text-field v-else v-model="currentWeight" type="number" label="Weight" suffix="kg">
-                <template v-slot:append>
-                  <v-btn
-                    icon="mdi-timer"
-                    variant="tonal"
-                    density="comfortable"
-                    @click="() => toggleDurationInsteadWeight()"
-                  ></v-btn>
-                </template>
-              </v-text-field>
+        <v-combobox
+          v-model="currentExerciseName"
+          :items="exercisesStore.exercises.map(({ name }) => name)"
+          label="Exercise"
+        ></v-combobox>
+        <v-text-field v-model="currentReps" type="number" label="Reps" suffix="x"></v-text-field>
+        <v-text-field
+          v-if="currentDurationInsteadWeight"
+          v-model="currentDuration"
+          type="number"
+          label="Duration"
+          suffix="mins"
+        >
+          <template v-slot:append>
+            <v-btn
+              icon="mdi-weight"
+              variant="tonal"
+              density="comfortable"
+              @click="() => toggleDurationInsteadWeight()"
+            ></v-btn>
+          </template>
+        </v-text-field>
+        <v-text-field v-else v-model="currentWeight" type="number" label="Weight" suffix="kg">
+          <template v-slot:append>
+            <v-btn
+              icon="mdi-timer"
+              variant="tonal"
+              density="comfortable"
+              @click="() => toggleDurationInsteadWeight()"
+            ></v-btn>
+          </template>
+        </v-text-field>
       </v-card-text>
       <v-card-actions>
         <v-btn
