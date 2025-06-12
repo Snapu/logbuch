@@ -42,7 +42,7 @@ function logCurrentExercise() {
       ? { duration: currentDuration.value }
       : {}),
   })
-  
+
   setTimeout(() => scrollBottom(), 200)
 }
 
