@@ -22,9 +22,15 @@ const currentDuration = ref<number | null>(null)
 
 const currentDurationInsteadWeight = ref<boolean>(false)
 
+function scrollBottom() {
+  if (logsContainer.value?.scrollTop !== undefined) {
+    logsContainer.value.scrollTop = logsContainer.value?.scrollHeight
+  }
+}
+
 function logCurrentExercise() {
   if (!currentExerciseName.value || !currentReps.value) return
-  exercisesStore.addExercise({ name: currentExerciseName.value })
+  exercisesStore.addExercise({ name: currentExerciseName.value.trim() })
   exerciseLogsStore.addExerciseLog({
     timestamp: Date.now(),
     exerciseName: currentExerciseName.value,
@@ -36,9 +42,8 @@ function logCurrentExercise() {
       ? { duration: currentDuration.value }
       : {}),
   })
-  if (logsContainer.value?.scrollTop !== undefined) {
-    logsContainer.value.scrollTop = logsContainer.value?.scrollHeight
-  }
+  
+  setTimeout(() => scrollBottom(), 200)
 }
 
 function deleteLog(log: ExerciseLog) {
@@ -162,5 +167,6 @@ function toggleDurationInsteadWeight() {
   flex: 1 1 auto;
   overflow-y: auto;
   height: 0px;
+  scroll-behavior: smooth;
 }
 </style>
