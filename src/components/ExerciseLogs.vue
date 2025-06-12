@@ -93,26 +93,17 @@ function toggleDurationInsteadWeight() {
 
     <v-card elevation="16">
       <v-card-text>
-        <v-container fluid>
-          <v-row dense>
-            <v-col>
               <v-combobox
                 v-model="currentExerciseName"
                 :items="exercisesStore.exercises.map(({ name }) => name)"
                 label="Exercise"
               ></v-combobox>
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col>
               <v-text-field
                 v-model="currentReps"
                 type="number"
                 label="Reps"
                 suffix="x"
               ></v-text-field>
-            </v-col>
-            <v-col>
               <v-text-field
                 v-if="currentDurationInsteadWeight"
                 v-model="currentDuration"
@@ -139,9 +130,6 @@ function toggleDurationInsteadWeight() {
                   ></v-btn>
                 </template>
               </v-text-field>
-            </v-col>
-          </v-row>
-        </v-container>
       </v-card-text>
       <v-card-actions>
         <v-btn
