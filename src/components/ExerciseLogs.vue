@@ -1,18 +1,28 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef, onMounted } from 'vue'
 import { useExerciseLogsStore, type ExerciseLog } from '@/stores/exerciseLogs'
 import { useExercisesStore } from '@/stores/exercises'
-
-const today = new Date()
-today.setHours(0, 0, 0, 0)
 
 const logsContainer = useTemplateRef('logs-container')
 
 const exercisesStore = useExercisesStore()
 const exerciseLogsStore = useExerciseLogsStore()
 
-const todaysLogs = computed(() =>
-  exerciseLogsStore.exerciseLogs.filter(({ timestamp }) => timestamp >= today.getTime()),
+const localeDateOptions: Intl.DateTimeFormatOptions = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+}
+const groupedLogs = computed(() =>
+  exerciseLogsStore.exerciseLogs.reduce(
+    (a, o) => {
+      const day = new Date(o.timestamp).toLocaleDateString(undefined, localeDateOptions)
+      a[day] = a[day] ? [...a[day], o] : [o]
+      return a
+    },
+    {} as Record<string, ExerciseLog[]>,
+  ),
 )
 
 const currentExerciseName = ref<string | null>(null)
@@ -53,37 +63,42 @@ function deleteLog(log: ExerciseLog) {
 function toggleDurationInsteadWeight() {
   currentDurationInsteadWeight.value = !currentDurationInsteadWeight.value
 }
+
+onMounted(() => {
+  setTimeout(() => scrollBottom(), 200)
+})
 </script>
 
 <template>
   <div class="flex-container">
-    <h3 class="mb-4 text-center">{{ today.toLocaleDateString() }}</h3>
-
     <div ref="logs-container" class="logs-scrollable-container">
-      <div
-        v-for="log in todaysLogs"
-        :key="log.exerciseName + log.timestamp"
-        color="rgba(255,255,255, 0.9)"
-        class="mb-1 log-item"
-      >
-        <v-container fluid>
-          <v-row no-gutters>
-            <v-col>
-              <b>{{ log.exerciseName }}</b> {{ log.reps }} x
-              <span v-if="log.weight">{{ log.weight }} kg</span>
-              <span v-if="log.duration">{{ log.duration }} mins</span>
-            </v-col>
-            <v-col class="text-right">
-              <v-btn
-                variant="tonal"
-                density="comfortable"
-                icon="mdi-delete-outline"
-                @click="() => deleteLog(log)"
-              ></v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-        <v-divider></v-divider>
+      <div v-for="[day, logs] in Object.entries(groupedLogs)" :key="day">
+        <h3 class="mb-4 text-center">{{ day }}</h3>
+        <div
+          v-for="log in logs"
+          :key="log.exerciseName + log.timestamp"
+          color="rgba(255,255,255, 0.9)"
+          class="mb-1 log-item"
+        >
+          <v-container fluid>
+            <v-row no-gutters>
+              <v-col>
+                <b>{{ log.exerciseName }}</b> {{ log.reps }} x
+                <span v-if="log.weight">{{ log.weight }} kg</span>
+                <span v-if="log.duration">{{ log.duration }} mins</span>
+              </v-col>
+              <v-col class="text-right">
+                <v-btn
+                  variant="tonal"
+                  density="comfortable"
+                  icon="mdi-delete-outline"
+                  @click="() => deleteLog(log)"
+                ></v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-divider></v-divider>
+        </div>
       </div>
     </div>
 
