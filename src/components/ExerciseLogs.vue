@@ -2,9 +2,12 @@
 import { computed, ref, useTemplateRef, onMounted } from 'vue'
 import { useExerciseLogsStore, type ExerciseLog } from '@/stores/exerciseLogs'
 import { useExercisesStore } from '@/stores/exercises'
+import { useAiStore } from '@/stores/ai'
 
 const logsContainer = useTemplateRef('logs-container')
+const dialog = ref(false)
 
+const aiStore = useAiStore()
 const exercisesStore = useExercisesStore()
 const exerciseLogsStore = useExerciseLogsStore()
 
@@ -67,6 +70,11 @@ function toggleDurationInsteadWeight() {
 onMounted(() => {
   setTimeout(() => scrollBottom(), 200)
 })
+
+function askAi() {
+  dialog.value = true
+  aiStore.askAi()
+}
 </script>
 
 <template>
@@ -102,9 +110,16 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- <div class="text-center">
-      <v-btn variant="outlined" prepend-icon="mdi-creation" class="my-4">Get AI Feedback</v-btn>
-    </div> -->
+    <div class="text-center">
+      <v-btn
+        variant="outlined"
+        size="large"
+        prepend-icon="mdi-creation"
+        class="my-4"
+        @click="() => askAi()"
+        >Get AI Feedback</v-btn
+      >
+    </div>
 
     <v-card elevation="16">
       <v-card-text>
@@ -144,6 +159,7 @@ onMounted(() => {
       <v-card-actions>
         <v-btn
           variant="tonal"
+          size="large"
           prepend-icon="mdi-plus"
           block
           :disabled="!currentExerciseName || !currentReps"
@@ -153,6 +169,14 @@ onMounted(() => {
       </v-card-actions>
     </v-card>
   </div>
+  <v-dialog v-model="dialog" fullscreen>
+    <v-card title="AI Feedback ✨" height="100%">
+      <v-card-text id="markdown"></v-card-text>
+      <v-card-actions>
+        <v-btn variant="tonal" size="large" block text="Close" @click="dialog = false"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style scoped>
@@ -166,5 +190,25 @@ onMounted(() => {
   overflow-y: auto;
   height: 0px;
   scroll-behavior: smooth;
+}
+</style>
+
+<style lang="postcss">
+#markdown {
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  ul,
+  ol {
+    margin: 1rem 0;
+  }
+  ul,
+  ol {
+    padding-left: 2rem;
+  }
 }
 </style>

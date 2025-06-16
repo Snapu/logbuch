@@ -12,6 +12,7 @@ import * as directives from 'vuetify/directives'
 
 import App from './App.vue'
 import router from './router'
+import { useUserProfileStore } from './stores/userProfile'
 
 const app = createApp(App)
 
@@ -25,3 +26,8 @@ app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
+
+const userProfileStore = useUserProfileStore()
+if (!userProfileStore.setupCompleted) {
+  router.push('/setup')
+}
