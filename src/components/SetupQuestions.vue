@@ -42,10 +42,30 @@ const workoutLocationLabels: [string, WorkoutLocation][] = [
   ['🌍 Both', 'both'],
 ]
 const equipmentOptionLabels: [string, EquipmentOption][] = [
-  ['Dumbbells/barbells', 'dumbbells_barbells'],
-  ['Bands', 'bands'],
-  ['Cardio machines', 'cardio_machines'],
-  ['Bodyweight only', 'bodyweight_only'],
+  // 🔹 Minimal / No Equipment
+  ['Bodyweight only', 'bodyweight'],
+
+  // 🔸 Lightweight / Portable Equipment
+  ['Resistance bands', 'resistance_bands'],
+  ['Suspension trainer (e.g. TRX)', 'suspension_trainer'],
+  ['Gymnastic rings', 'gymnastic_rings'],
+
+  // 🔹 Calisthenics / Fixed Bars
+  ['Pull-up bar', 'pull_up_bar'],
+  ['Dip bar', 'dip_bar'],
+
+  // 🔸 Free Weights
+  ['Dumbbells', 'dumbbells'],
+  ['Kettlebells', 'kettlebells'],
+  ['Barbell & rack', 'barbell_rack'],
+  ['Bench', 'bench'],
+
+  // 🔹 Machines
+  ['Cable machine', 'cable_machine'],
+  ['Cardio machines', 'cardio_machine'],
+
+  // 🔸 Functional Tools
+  ['Medicine ball', 'medicine_ball'],
 ]
 
 function save() {

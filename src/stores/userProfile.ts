@@ -12,7 +12,20 @@ export type FitnessLevel = 'beginner' | 'intermediate' | 'advanced'
 
 export type WorkoutLocation = 'gym' | 'home' | 'both'
 
-export type EquipmentOption = 'dumbbells_barbells' | 'bands' | 'cardio_machines' | 'bodyweight_only'
+export type EquipmentOption =
+  | 'bodyweight'
+  | 'dumbbells'
+  | 'barbell_rack'
+  | 'resistance_bands'
+  | 'kettlebells'
+  | 'pull_up_bar'
+  | 'dip_bar'
+  | 'gymnastic_rings'
+  | 'cable_machine'
+  | 'cardio_machine'
+  | 'suspension_trainer'
+  | 'medicine_ball'
+  | 'bench'
 
 export type UserProfile = {
   age?: number
