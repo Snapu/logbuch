@@ -36,6 +36,7 @@ export type UserProfile = {
   workoutDaysPerWeek?: number
   workoutLocation?: WorkoutLocation
   equipmentAccess?: EquipmentOption[]
+  freeUserInput?: string
   apiKey?: string
 }
 

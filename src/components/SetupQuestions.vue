@@ -82,7 +82,7 @@ function save() {
     <v-tabs-window v-model="tabs">
       <v-tabs-window-item :value="1">
         <v-card-text>
-          <p class="text-h4">👋 Hello!</p>
+          <p class="text-h5">👋 Hello!</p>
           <p>I'm your smart fitness logger 🤖</p>
           <p>
             Before we begin, tell me a bit about you and your goals 🎯 so I can give you
@@ -96,7 +96,7 @@ function save() {
 
       <v-tabs-window-item :value="2">
         <v-card-text>
-          <p class="text-h4">What's your main fitness goal?</p>
+          <p class="text-h5">What's your main fitness goal?</p>
           <p>(Pick one or two)</p>
           <v-checkbox
             v-for="[label, value] in fitnessGoalLabels"
@@ -115,7 +115,7 @@ function save() {
 
       <v-tabs-window-item :value="3">
         <v-card-text>
-          <p class="text-h4">What’s your current fitness level?</p>
+          <p class="text-h5">What’s your current fitness level?</p>
           <v-checkbox
             v-for="[label, value] in fitnessLevelLabels"
             v-model="form.fitnessLevel"
@@ -137,7 +137,7 @@ function save() {
 
       <v-tabs-window-item :value="4">
         <v-card-text>
-          <p class="text-h4">How many days per week do you want to train?</p>
+          <p class="text-h5">How many days per week do you want to train?</p>
           <v-checkbox
             v-for="[label, value] in workoutDaysPerWeekLabels"
             v-model="form.workoutDaysPerWeek"
@@ -159,7 +159,7 @@ function save() {
 
       <v-tabs-window-item :value="5">
         <v-card-text>
-          <p class="text-h4">Where do you work out most?</p>
+          <p class="text-h5">Where do you work out most?</p>
           <v-checkbox
             v-for="[label, value] in workoutLocationLabels"
             v-model="form.workoutLocation"
@@ -181,8 +181,7 @@ function save() {
 
       <v-tabs-window-item :value="6">
         <v-card-text>
-          <p class="text-h4">What equipment do you have access to?</p>
-          <p>(Select all that apply)</p>
+          <p class="text-h5">What equipment do you have access to?</p>
           <v-checkbox
             v-for="[label, value] in equipmentOptionLabels"
             v-model="form.equipmentAccess"
@@ -205,7 +204,7 @@ function save() {
 
       <v-tabs-window-item :value="7">
         <v-card-text>
-          <p class="text-h4">What’s your age, height, and weight?</p>
+          <p class="text-h5">What’s your age, height, and weight?</p>
           <v-text-field label="Age" type="number" v-model="form.age"></v-text-field>
           <v-text-field
             label="Height"
@@ -232,7 +231,22 @@ function save() {
 
       <v-tabs-window-item :value="8">
         <v-card-text>
-          <p class="text-h4">Finally, I need your Google Gemini API Key.</p>
+          <p class="text-h5">Anything else that you want to tell me?</p>
+          <v-textarea label="Free input" v-model="form.freeUserInput"></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <div class="tab-nav-button">
+            <v-btn variant="tonal" size="large" block @click="() => tabs--">Previous</v-btn>
+          </div>
+          <div class="tab-nav-button">
+            <v-btn variant="tonal" size="large" block @click="() => tabs++">Next</v-btn>
+          </div>
+        </v-card-actions>
+      </v-tabs-window-item>
+
+      <v-tabs-window-item :value="9">
+        <v-card-text>
+          <p class="text-h5">Finally, I need your Google Gemini API Key.</p>
           <p>(You can also do it later)</p>
           <p>
             Get it from:
