@@ -3,6 +3,7 @@ import { computed, ref, useTemplateRef, onMounted } from 'vue'
 import { useExerciseLogsStore, type ExerciseLog } from '@/stores/exerciseLogs'
 import { useExercisesStore } from '@/stores/exercises'
 import { useAiStore } from '@/stores/ai'
+import router from '@/router'
 
 const logsContainer = useTemplateRef('logs-container')
 const dialog = ref(false)
@@ -71,6 +72,10 @@ onMounted(() => {
   setTimeout(() => scrollBottom(), 200)
 })
 
+function openSetup() {
+  router.push('/setup')
+}
+
 function askAi() {
   dialog.value = true
   aiStore.askAi()
@@ -111,6 +116,13 @@ function askAi() {
     </div>
 
     <div class="text-center">
+      <v-btn
+        variant="outlined"
+        density="comfortable"
+        icon="mdi-cog-outline"
+        class="mr-4"
+        @click="() => openSetup()"
+      ></v-btn>
       <v-btn
         variant="outlined"
         size="large"

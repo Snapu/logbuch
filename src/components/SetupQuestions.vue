@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import {
   useUserProfileStore,
   type UserProfile,
@@ -8,10 +8,15 @@ import {
   type FitnessGoal,
   type EquipmentOption,
 } from '@/stores/userProfile'
+import router from '@/router'
 
 const userProfileStore = useUserProfileStore()
 const form = reactive<UserProfile>({ ...userProfileStore.userProfile })
 const tabs = ref(1)
+
+onMounted(() => {
+  tabs.value = userProfileStore.setupCompleted ? 2 : 1
+})
 
 const fitnessGoalLabels: [string, FitnessGoal][] = [
   ['🏋️ Build muscle', 'build_muscle'],
@@ -45,13 +50,17 @@ const equipmentOptionLabels: [string, EquipmentOption][] = [
 
 function save() {
   userProfileStore.saveUserProfile(form)
+  router.push('/')
 }
 </script>
 
 <template>
-  <v-tabs-window v-model="tabs">
-    <v-tabs-window-item :value="1">
-      <v-card>
+  <v-card>
+    <div class="text-right">
+      <v-btn variant="plain" icon="mdi-close" @click="() => save()"></v-btn>
+    </div>
+    <v-tabs-window v-model="tabs">
+      <v-tabs-window-item :value="1">
         <v-card-text>
           <p class="text-h4">👋 Hello!</p>
           <p>I'm your smart fitness logger 🤖</p>
@@ -63,17 +72,16 @@ function save() {
         <v-card-actions>
           <v-btn variant="tonal" size="large" block @click="() => tabs++">Ok</v-btn>
         </v-card-actions>
-      </v-card>
-    </v-tabs-window-item>
+      </v-tabs-window-item>
 
-    <v-tabs-window-item :value="2">
-      <v-card>
+      <v-tabs-window-item :value="2">
         <v-card-text>
           <p class="text-h4">What's your main fitness goal?</p>
           <p>(Pick one or two)</p>
           <v-checkbox
             v-for="[label, value] in fitnessGoalLabels"
             v-model="form.fitnessGoal"
+            :key="`fitnessGoalLabel-${value}`"
             :label="label"
             :value="value"
             multiple
@@ -83,16 +91,15 @@ function save() {
         <v-card-actions>
           <v-btn variant="tonal" size="large" block @click="() => tabs++">Next</v-btn>
         </v-card-actions>
-      </v-card>
-    </v-tabs-window-item>
+      </v-tabs-window-item>
 
-    <v-tabs-window-item :value="3">
-      <v-card>
+      <v-tabs-window-item :value="3">
         <v-card-text>
           <p class="text-h4">What’s your current fitness level?</p>
           <v-checkbox
             v-for="[label, value] in fitnessLevelLabels"
             v-model="form.fitnessLevel"
+            :key="`fitnessLevelLabel-${value}`"
             :label="label"
             :value="value"
             hide-details
@@ -106,16 +113,15 @@ function save() {
             <v-btn variant="tonal" size="large" block @click="() => tabs++">Next</v-btn>
           </div>
         </v-card-actions>
-      </v-card>
-    </v-tabs-window-item>
+      </v-tabs-window-item>
 
-    <v-tabs-window-item :value="4">
-      <v-card>
+      <v-tabs-window-item :value="4">
         <v-card-text>
           <p class="text-h4">How many days per week do you want to train?</p>
           <v-checkbox
             v-for="[label, value] in workoutDaysPerWeekLabels"
             v-model="form.workoutDaysPerWeek"
+            :key="`workoutDaysPerWeekLabel-${value}`"
             :label="label"
             :value="value"
             hide-details
@@ -129,16 +135,15 @@ function save() {
             <v-btn variant="tonal" size="large" block @click="() => tabs++">Next</v-btn>
           </div>
         </v-card-actions>
-      </v-card>
-    </v-tabs-window-item>
+      </v-tabs-window-item>
 
-    <v-tabs-window-item :value="5">
-      <v-card>
+      <v-tabs-window-item :value="5">
         <v-card-text>
           <p class="text-h4">Where do you work out most?</p>
           <v-checkbox
             v-for="[label, value] in workoutLocationLabels"
             v-model="form.workoutLocation"
+            :key="`workoutLocationLabel-${value}`"
             :label="label"
             :value="value"
             hide-details
@@ -152,17 +157,16 @@ function save() {
             <v-btn variant="tonal" size="large" block @click="() => tabs++">Next</v-btn>
           </div>
         </v-card-actions>
-      </v-card>
-    </v-tabs-window-item>
+      </v-tabs-window-item>
 
-    <v-tabs-window-item :value="6">
-      <v-card>
+      <v-tabs-window-item :value="6">
         <v-card-text>
           <p class="text-h4">What equipment do you have access to?</p>
           <p>(Select all that apply)</p>
           <v-checkbox
             v-for="[label, value] in equipmentOptionLabels"
             v-model="form.equipmentAccess"
+            :key="`equipmentOptionLabel-${value}`"
             :label="label"
             :value="value"
             hide-details
@@ -177,11 +181,9 @@ function save() {
             <v-btn variant="tonal" size="large" block @click="() => tabs++">Next</v-btn>
           </div>
         </v-card-actions>
-      </v-card>
-    </v-tabs-window-item>
+      </v-tabs-window-item>
 
-    <v-tabs-window-item :value="7">
-      <v-card>
+      <v-tabs-window-item :value="7">
         <v-card-text>
           <p class="text-h4">What’s your age, height, and weight?</p>
           <v-text-field label="Age" type="number" v-model="form.age"></v-text-field>
@@ -206,23 +208,26 @@ function save() {
             <v-btn variant="tonal" size="large" block @click="() => tabs++">Next</v-btn>
           </div>
         </v-card-actions>
-      </v-card>
-    </v-tabs-window-item>
+      </v-tabs-window-item>
 
-    <v-tabs-window-item :value="8">
-      <v-card>
+      <v-tabs-window-item :value="8">
         <v-card-text>
           <p class="text-h4">Finally, I need your Google Gemini API Key.</p>
-          <p>Get it from:</p>
-          <p>https://aistudio.google.com/apikey</p>
+          <p>(You can also do it later)</p>
+          <p>
+            Get it from:
+            <a target="_blank" href="https://aistudio.google.com/apikey"
+              >https://aistudio.google.com/apikey</a
+            >
+          </p>
           <v-text-field label="API Key" v-model="form.apiKey"></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-btn variant="tonal" size="large" block @click="() => save()">Save</v-btn>
         </v-card-actions>
-      </v-card>
-    </v-tabs-window-item>
-  </v-tabs-window>
+      </v-tabs-window-item>
+    </v-tabs-window>
+  </v-card>
 </template>
 
 <style scoped>

@@ -1,4 +1,3 @@
-import router from '@/router'
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 
@@ -34,7 +33,6 @@ export const useUserProfileStore = defineStore('userProfile', () => {
   function saveUserProfile(value: UserProfile) {
     userProfile.value = value
     setupCompleted.value = true
-    router.push('/')
   }
 
   return { userProfile, setupCompleted, saveUserProfile }
