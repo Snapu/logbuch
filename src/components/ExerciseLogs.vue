@@ -7,6 +7,7 @@ import router from '@/router'
 
 const logsContainer = useTemplateRef('logs-container')
 const dialog = ref(false)
+const cacheAiFeedback = ref(false)
 
 const aiStore = useAiStore()
 const exercisesStore = useExercisesStore()
@@ -52,7 +53,7 @@ function logCurrentExercise() {
     distance: currentDistance.value ?? undefined,
     duration: currentDuration.value ?? undefined,
   })
-
+  cacheAiFeedback.value = false
   setTimeout(() => scrollBottom(), 200)
 }
 
@@ -70,7 +71,9 @@ function openSetup() {
 
 function askAi() {
   dialog.value = true
+  if (cacheAiFeedback.value) return
   aiStore.askAi()
+  cacheAiFeedback.value = true
 }
 </script>
 
@@ -196,7 +199,7 @@ function askAi() {
       </v-card-actions>
     </v-card>
   </div>
-  <v-dialog v-model="dialog" fullscreen>
+  <v-dialog v-model="dialog" fullscreen eager>
     <v-card title="AI Feedback ✨" height="100%">
       <v-card-text id="markdown"></v-card-text>
       <v-card-actions>

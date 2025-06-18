@@ -34,21 +34,21 @@ export const useAiStore = defineStore('ai', () => {
     const ai = new GoogleGenAI({ apiKey: userProfileStore.userProfile.apiKey })
 
     const contents = `
-      This is my profile data:
-      \`\`\`
-        ${JSON.stringify(userProfileStore.userProfile)}
-      \`\`\`
-
-      These are my logs so far:
-      \`\`\`
-        ${JSON.stringify(exerciseLogsStore.exerciseLogs)}
-      \`\`\`
-
-      Note:
-        - current timestamp to dermine today: ${Date.now()}
-        - units: weight => kg, duration => mins, distance => m
-        - respond in user's language: ${navigator.language}
-    `
+    This is the user's profile:
+    \`\`\`json
+    ${JSON.stringify(userProfileStore.userProfile, null, 2)}
+    \`\`\`
+    
+    Here is the user's exercise log history:
+    \`\`\`json
+    ${JSON.stringify(exerciseLogsStore.exerciseLogs, null, 2)}
+    \`\`\`
+    
+    Context:
+    - Current timestamp (for determining "today"): ${Date.now()}
+    - Units: weight = kg, duration = minutes, distance = meters
+    - Language preference: ${navigator.language}
+    `;
 
     console.debug(contents)
 
