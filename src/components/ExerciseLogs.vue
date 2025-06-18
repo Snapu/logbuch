@@ -31,10 +31,9 @@ const groupedLogs = computed(() =>
 
 const currentExerciseName = ref<string | null>(null)
 const currentReps = ref<number | null>(null)
+const currentDistance = ref<number | null>(null)
 const currentWeight = ref<number | null>(null)
 const currentDuration = ref<number | null>(null)
-
-const currentDurationInsteadWeight = ref<boolean>(false)
 
 function scrollBottom() {
   if (logsContainer.value?.scrollTop !== undefined) {
@@ -43,18 +42,15 @@ function scrollBottom() {
 }
 
 function logCurrentExercise() {
-  if (!currentExerciseName.value || !currentReps.value) return
+  if (!currentExerciseName.value) return
   exercisesStore.addExercise({ name: currentExerciseName.value.trim() })
   exerciseLogsStore.addExerciseLog({
     timestamp: Date.now(),
     exerciseName: currentExerciseName.value,
-    reps: currentReps.value,
-    ...(!currentDurationInsteadWeight.value && currentWeight.value !== null
-      ? { weight: currentWeight.value }
-      : {}),
-    ...(currentDurationInsteadWeight.value && currentDuration.value !== null
-      ? { duration: currentDuration.value }
-      : {}),
+    reps: currentReps.value ?? undefined,
+    weight: currentWeight.value ?? undefined,
+    distance: currentDistance.value ?? undefined,
+    duration: currentDuration.value ?? undefined,
   })
 
   setTimeout(() => scrollBottom(), 200)
@@ -62,10 +58,6 @@ function logCurrentExercise() {
 
 function deleteLog(log: ExerciseLog) {
   exerciseLogsStore.removeExerciseLog(log)
-}
-
-function toggleDurationInsteadWeight() {
-  currentDurationInsteadWeight.value = !currentDurationInsteadWeight.value
 }
 
 onMounted(() => {
@@ -96,8 +88,10 @@ function askAi() {
           <v-container fluid>
             <v-row no-gutters>
               <v-col>
-                <b>{{ log.exerciseName }}</b> {{ log.reps }} x
+                <b>{{ log.exerciseName }}</b>
+                <span v-if="log.reps">{{ log.reps }} x</span>
                 <span v-if="log.weight">{{ log.weight }} kg</span>
+                <span v-if="log.distance">{{ log.distance }} kg</span>
                 <span v-if="log.duration">{{ log.duration }} mins</span>
               </v-col>
               <v-col class="text-right">
@@ -135,46 +129,67 @@ function askAi() {
 
     <v-card elevation="16">
       <v-card-text>
-        <v-combobox
-          v-model="currentExerciseName"
-          :items="exercisesStore.exercises.map(({ name }) => name)"
-          label="Exercise"
-        ></v-combobox>
-        <v-text-field v-model="currentReps" type="number" label="Reps" suffix="x"></v-text-field>
-        <v-text-field
-          v-if="currentDurationInsteadWeight"
-          v-model="currentDuration"
-          type="number"
-          label="Duration"
-          suffix="mins"
-        >
-          <template v-slot:append>
-            <v-btn
-              icon="mdi-weight"
-              variant="tonal"
-              density="comfortable"
-              @click="() => toggleDurationInsteadWeight()"
-            ></v-btn>
-          </template>
-        </v-text-field>
-        <v-text-field v-else v-model="currentWeight" type="number" label="Weight" suffix="kg">
-          <template v-slot:append>
-            <v-btn
-              icon="mdi-timer"
-              variant="tonal"
-              density="comfortable"
-              @click="() => toggleDurationInsteadWeight()"
-            ></v-btn>
-          </template>
-        </v-text-field>
+        <v-container fluid class="pa-0">
+          <v-row dense class="mb-2">
+            <v-col>
+              <v-combobox
+                v-model="currentExerciseName"
+                :items="exercisesStore.exercises.map(({ name }) => name)"
+                label="Exercise"
+                hide-details
+              ></v-combobox>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col>
+              <v-text-field
+                v-model="currentReps"
+                type="number"
+                label="Reps"
+                suffix="x"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="currentWeight"
+                type="number"
+                label="Weight in kg"
+                suffix="kg"
+                hide-details
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col>
+              <v-text-field
+                v-model="currentDistance"
+                type="number"
+                label="Distance in m"
+                suffix="m"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="currentDuration"
+                type="number"
+                label="Duration in mins"
+                suffix="mins"
+                hide-details
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-text>
+
       <v-card-actions>
         <v-btn
           variant="tonal"
           size="large"
           prepend-icon="mdi-plus"
           block
-          :disabled="!currentExerciseName || !currentReps"
+          :disabled="!currentExerciseName"
           @click="() => logCurrentExercise()"
           >log</v-btn
         >

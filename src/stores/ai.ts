@@ -43,6 +43,10 @@ export const useAiStore = defineStore('ai', () => {
       \`\`\`
         ${JSON.stringify(exerciseLogsStore.exerciseLogs)}
       \`\`\`
+
+      Note:
+        - current timestamp to dermine today: ${Date.now()}
+        - units: weight => kg, duration => mins, distance => m
     `
 
     console.debug(contents)

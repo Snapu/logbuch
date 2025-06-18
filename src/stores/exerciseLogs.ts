@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 
 export type ExerciseLog = {
   exerciseName: string
-  reps: number
+  reps?: number
+  distance?: number
   weight?: number
   duration?: number
   timestamp: number
