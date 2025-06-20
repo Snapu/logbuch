@@ -81,8 +81,8 @@ function openSetup() {
 function askAi() {
   dialog.value = true
   if (cacheAiFeedback.value) return
-  aiStore.askAi()
   cacheAiFeedback.value = true
+  aiStore.askAi()
 }
 </script>
 
@@ -212,7 +212,7 @@ function askAi() {
   </div>
   <v-dialog v-model="dialog" fullscreen eager>
     <v-card title="AI Feedback ✨" height="100%">
-      <v-card-text id="markdown"></v-card-text>
+      <v-card-text id="markdown" :key="`${cacheAiFeedback}`"></v-card-text>
       <v-card-actions>
         <v-btn variant="tonal" size="large" block text="Close" @click="dialog = false"></v-btn>
       </v-card-actions>
