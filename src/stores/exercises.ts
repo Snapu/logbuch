@@ -5,14 +5,17 @@ export type Exercise = {
   name: string
 }
 
+const clean = (s: string) => s.trim().replace(/\s+/g, ' ')
+
 export const useExercisesStore = defineStore('exercises', () => {
   const exercises = useLocalStorage('exercises', [] as Exercise[])
 
   function addExercise(exercise: Exercise) {
-    if (exercises.value.find(({ name }) => name === exercise.name)) {
+    const cleaned = { ...exercise, name: clean(exercise.name) }
+    if (exercises.value.find(({ name }) => clean(name) === cleaned.name)) {
       return
     }
-    exercises.value.push(exercise)
+    exercises.value.push(cleaned)
   }
 
   function removeExercise(exercise: Exercise) {

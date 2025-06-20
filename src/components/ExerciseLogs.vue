@@ -100,11 +100,13 @@ function askAi() {
           <v-container fluid>
             <v-row no-gutters>
               <v-col>
-                <b>{{ log.exerciseName }}</b>
-                <span v-if="log.reps">{{ log.reps }} x</span>
-                <span v-if="log.weight">{{ log.weight }} kg</span>
-                <span v-if="log.distance">{{ log.distance }} m</span>
-                <span v-if="log.duration">{{ log.duration }} mins</span>
+                <span class="mr-2"
+                  ><b>{{ log.exerciseName }}</b></span
+                >
+                <span v-if="log.reps" class="mr-1">{{ log.reps }} x</span>
+                <span v-if="log.weight" class="mr-1">{{ log.weight }} kg</span>
+                <span v-if="log.distance" class="mr-1">{{ log.distance }} m</span>
+                <span v-if="log.duration" class="mr-1">{{ log.duration }} mins</span>
               </v-col>
               <v-col class="text-right">
                 <v-btn

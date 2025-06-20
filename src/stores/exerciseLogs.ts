@@ -14,7 +14,7 @@ export const useExerciseLogsStore = defineStore('exerciseLogs', () => {
   const exerciseLogs = useLocalStorage('exerciseLogs', [] as ExerciseLog[])
 
   function addExerciseLog(log: ExerciseLog) {
-    exerciseLogs.value.push(log)
+    exerciseLogs.value.push({ ...log, exerciseName: log.exerciseName.trim().replace(/\s+/g, ' ') })
   }
 
   function removeExerciseLog(log: ExerciseLog) {
