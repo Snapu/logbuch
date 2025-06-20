@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, onMounted } from 'vue'
+import { computed, ref, useTemplateRef, onMounted, watchEffect } from 'vue'
 import { useExerciseLogsStore, type ExerciseLog } from '@/stores/exerciseLogs'
 import { useExercisesStore } from '@/stores/exercises'
 import { useAiStore } from '@/stores/ai'
@@ -65,6 +65,15 @@ onMounted(() => {
   setTimeout(() => scrollBottom(), 200)
 })
 
+watchEffect(() => {
+  if (!currentExerciseName.value) return
+  const lastLog = exerciseLogsStore.lastLogForExercise(currentExerciseName.value)
+  currentReps.value = lastLog?.reps ?? null
+  currentDistance.value = lastLog?.distance ?? null
+  currentWeight.value = lastLog?.weight ?? null
+  currentDuration.value = lastLog?.duration ?? null
+})
+
 function openSetup() {
   router.push('/setup')
 }
@@ -94,7 +103,7 @@ function askAi() {
                 <b>{{ log.exerciseName }}</b>
                 <span v-if="log.reps">{{ log.reps }} x</span>
                 <span v-if="log.weight">{{ log.weight }} kg</span>
-                <span v-if="log.distance">{{ log.distance }} kg</span>
+                <span v-if="log.distance">{{ log.distance }} m</span>
                 <span v-if="log.duration">{{ log.duration }} mins</span>
               </v-col>
               <v-col class="text-right">

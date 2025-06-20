@@ -23,5 +23,11 @@ export const useExerciseLogsStore = defineStore('exerciseLogs', () => {
         !(exerciseName === log.exerciseName && timestamp === log.timestamp),
     )
   }
-  return { exerciseLogs, addExerciseLog, removeExerciseLog }
+
+  function lastLogForExercise(exerciseName: string) {
+    return exerciseLogs.value
+      .filter((log) => exerciseName === log.exerciseName)
+      .sort((a, b) => b.timestamp - a.timestamp)?.[0]
+  }
+  return { exerciseLogs, addExerciseLog, removeExerciseLog, lastLogForExercise }
 })

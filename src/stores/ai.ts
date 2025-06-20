@@ -54,7 +54,7 @@ export const useAiStore = defineStore('ai', () => {
     - Current timestamp (for determining "today"): ${Date.now()}
     - Units: weight = kg, duration = minutes, distance = meters
     - User's language preference: ${navigator.language}
-    `;
+    `
 
     console.debug(contents)
 
