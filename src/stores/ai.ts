@@ -47,11 +47,17 @@ export const useAiStore = defineStore('ai', () => {
     
     Here is the user's exercise log history:
     \`\`\`json
-    ${JSON.stringify(exerciseLogsStore.exerciseLogs, null, 2)}
+    ${JSON.stringify(
+      exerciseLogsStore.exerciseLogs.map((log) => {
+        return { ...log, timestamp: new Date(log.timestamp).toLocaleString() }
+      }),
+      null,
+      2,
+    )}
     \`\`\`
     
     Context:
-    - Current timestamp (for determining "today"): ${Date.now()}
+    - Current timestamp (for determining "today"): ${new Date().toLocaleString()}
     - Units: weight = kg, duration = minutes, distance = meters
     - User's language preference: ${navigator.language}
     `
