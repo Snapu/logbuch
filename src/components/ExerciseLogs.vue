@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, onMounted, watchEffect } from 'vue'
+import { computed, ref, useTemplateRef, onMounted, watch, watchEffect } from 'vue'
 import { useExerciseLogsStore, type ExerciseLog } from '@/stores/exerciseLogs'
 import { useExercisesStore } from '@/stores/exercises'
 import { useAiStore } from '@/stores/ai'
 import router from '@/router'
-
-const logsContainer = useTemplateRef('logs-container')
-const dialog = ref(false)
-const cacheAiFeedback = ref(false)
-
-const aiStore = useAiStore()
-const exercisesStore = useExercisesStore()
-const exerciseLogsStore = useExerciseLogsStore()
 
 const localeDateOptions: Intl.DateTimeFormatOptions = {
   weekday: 'long',
@@ -19,10 +11,21 @@ const localeDateOptions: Intl.DateTimeFormatOptions = {
   month: 'numeric',
   day: 'numeric',
 }
+const localeDateString = (date: Date) => date.toLocaleDateString(undefined, localeDateOptions)
+
+const logsContainer = useTemplateRef('logs-container')
+const dialog = ref(false)
+const cacheAiFeedback = ref(false)
+const open = ref([localeDateString(new Date())])
+
+const aiStore = useAiStore()
+const exercisesStore = useExercisesStore()
+const exerciseLogsStore = useExerciseLogsStore()
+
 const groupedLogs = computed(() =>
   exerciseLogsStore.exerciseLogs.reduce(
     (a, o) => {
-      const day = new Date(o.timestamp).toLocaleDateString(undefined, localeDateOptions)
+      const day = localeDateString(new Date(o.timestamp))
       a[day] = a[day] ? [...a[day], o] : [o]
       return a
     },
@@ -89,57 +92,58 @@ function askAi() {
 <template>
   <div class="flex-container">
     <div ref="logs-container" class="logs-scrollable-container">
-      <div v-for="[day, logs] in Object.entries(groupedLogs)" :key="day">
-        <h3 class="mb-4 text-center">{{ day }}</h3>
-        <div
-          v-for="log in logs"
-          :key="log.exerciseName + log.timestamp"
-          color="rgba(255,255,255, 0.9)"
-          class="mb-1 log-item"
+      <v-list v-model:opened="open" bg-color="transparent">
+        <v-list-group
+          v-for="[day, logs] in Object.entries(groupedLogs)"
+          :key="day"
+          :value="day"
+          fluid
         >
-          <v-container fluid>
-            <v-row no-gutters>
-              <v-col>
-                <span class="mr-2"
-                  ><b>{{ log.exerciseName }}</b></span
-                >
-                <span v-if="log.reps" class="mr-1">{{ log.reps }} x</span>
-                <span v-if="log.weight" class="mr-1">{{ log.weight }} kg</span>
-                <span v-if="log.distance" class="mr-1">{{ log.distance }} m</span>
-                <span v-if="log.duration" class="mr-1">{{ log.duration }} mins</span>
-              </v-col>
-              <v-col class="text-right">
-                <v-btn
-                  variant="tonal"
-                  density="comfortable"
-                  icon="mdi-delete-outline"
-                  @click="() => deleteLog(log)"
-                ></v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-divider></v-divider>
-        </div>
-      </div>
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props" :title="day"></v-list-item>
+          </template>
+          <v-list-item v-for="log in logs" :key="log.exerciseName + log.timestamp">
+            <template v-slot:prepend>
+              <v-btn
+                variant="tonal"
+                density="comfortable"
+                icon="mdi-delete-outline"
+                @click="() => deleteLog(log)"
+                class="my-2 mr-6"
+              ></v-btn>
+            </template>
+            <span class="mr-2"
+              ><b>{{ log.exerciseName }}</b></span
+            >
+            <span v-if="log.reps" class="mr-1">{{ log.reps }} x</span>
+            <span v-if="log.weight" class="mr-1">{{ log.weight }} kg</span>
+            <span v-if="log.distance" class="mr-1">{{ log.distance }} m</span>
+            <span v-if="log.duration" class="mr-1">{{ log.duration }} mins</span>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
     </div>
 
-    <div class="text-center">
-      <v-btn
-        variant="outlined"
-        density="comfortable"
-        icon="mdi-cog-outline"
-        class="mr-4"
-        @click="() => openSetup()"
-      ></v-btn>
-      <v-btn
-        variant="outlined"
-        size="large"
-        prepend-icon="mdi-creation"
-        class="my-4"
-        @click="() => askAi()"
-        >Get AI Feedback</v-btn
-      >
-    </div>
+    <v-list bg-color="transparent">
+      <v-divider></v-divider>
+      <v-list-item>
+        <v-checkbox
+          label="Workout finished"
+          v-model="exerciseLogsStore.workoutFinished"
+          hide-details
+          @update:model-value="() => (cacheAiFeedback = false)"
+        ></v-checkbox>
+        <template v-slot:append>
+          <v-btn
+            variant="tonal"
+            icon="mdi-cog-outline"
+            class="ma-2"
+            @click="() => openSetup()"
+          ></v-btn>
+          <v-btn variant="tonal" icon="mdi-brain" class="ma-2" @click="() => askAi()"></v-btn>
+        </template>
+      </v-list-item>
+    </v-list>
 
     <v-card elevation="16">
       <v-card-text>

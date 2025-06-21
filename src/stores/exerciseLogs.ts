@@ -12,6 +12,12 @@ export type ExerciseLog = {
 
 export const useExerciseLogsStore = defineStore('exerciseLogs', () => {
   const exerciseLogs = useLocalStorage('exerciseLogs', [] as ExerciseLog[])
+  const workoutFinished = useLocalStorage('workoutFinished', false)
+
+  const startOfToday = new Date().setHours(0, 0, 0, 0)
+  if (!exerciseLogs.value.find((log) => log.timestamp > startOfToday)) {
+    workoutFinished.value = false
+  }
 
   function addExerciseLog(log: ExerciseLog) {
     exerciseLogs.value.push({ ...log, exerciseName: log.exerciseName.trim().replace(/\s+/g, ' ') })
@@ -29,5 +35,5 @@ export const useExerciseLogsStore = defineStore('exerciseLogs', () => {
       .filter((log) => exerciseName === log.exerciseName)
       .sort((a, b) => b.timestamp - a.timestamp)?.[0]
   }
-  return { exerciseLogs, addExerciseLog, removeExerciseLog, lastLogForExercise }
+  return { exerciseLogs, workoutFinished, addExerciseLog, removeExerciseLog, lastLogForExercise }
 })

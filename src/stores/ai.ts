@@ -58,6 +58,7 @@ export const useAiStore = defineStore('ai', () => {
     
     Context:
     - Current timestamp (for determining "today"): ${new Date().toLocaleString()}
+    - Today's workout is finished: ${exerciseLogsStore.workoutFinished}
     - Units: weight = kg, duration = minutes, distance = meters
     - User's language preference: ${navigator.language}
     `
