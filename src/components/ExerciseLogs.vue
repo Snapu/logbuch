@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, onMounted, watch, watchEffect } from 'vue'
+import { computed, ref, useTemplateRef, onMounted, watchEffect } from 'vue'
 import { useExerciseLogsStore, type ExerciseLog } from '@/stores/exerciseLogs'
 import { useExercisesStore } from '@/stores/exercises'
 import { useAiStore } from '@/stores/ai'
 import router from '@/router'
-
-const localeDateOptions: Intl.DateTimeFormatOptions = {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-}
-const localeDateString = (date: Date) => date.toLocaleDateString(undefined, localeDateOptions)
+import { localeDateString } from '@/services/dateUtils'
 
 const logsContainer = useTemplateRef('logs-container')
 const dialog = ref(false)

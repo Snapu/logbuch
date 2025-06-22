@@ -1,5 +1,7 @@
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
+import { computed } from 'vue'
+import example1 from './examples/example1'
 
 export type ExerciseLog = {
   exerciseName: string
@@ -15,7 +17,12 @@ export const useExerciseLogsStore = defineStore('exerciseLogs', () => {
   const workoutFinished = useLocalStorage('workoutFinished', false)
 
   const startOfToday = new Date().setHours(0, 0, 0, 0)
-  if (!exerciseLogs.value.find((log) => log.timestamp > startOfToday)) {
+  const workoutStarted = computed(() =>
+    exerciseLogs.value.find((log) => log.timestamp > startOfToday),
+  )
+
+  // reset on new day (i.e. workout not started yet)
+  if (!workoutStarted) {
     workoutFinished.value = false
   }
 
@@ -35,5 +42,13 @@ export const useExerciseLogsStore = defineStore('exerciseLogs', () => {
       .filter((log) => exerciseName === log.exerciseName)
       .sort((a, b) => b.timestamp - a.timestamp)?.[0]
   }
-  return { exerciseLogs, workoutFinished, addExerciseLog, removeExerciseLog, lastLogForExercise }
+
+  return {
+    exerciseLogs,
+    workoutFinished,
+    workoutStarted,
+    addExerciseLog,
+    removeExerciseLog,
+    lastLogForExercise,
+  }
 })
