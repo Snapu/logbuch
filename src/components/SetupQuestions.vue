@@ -83,7 +83,7 @@ function save() {
       <v-tabs-window-item :value="1">
         <v-card-text>
           <p class="text-h5">👋 Hello!</p>
-          <p>I'm your smart fitness logger 🤖</p>
+          <p>I'm your AI personal fitness trainer! 🤖💪</p>
           <p>
             Before we begin, tell me a bit about you and your goals 🎯 so I can give you
             personalized feedback 💡
