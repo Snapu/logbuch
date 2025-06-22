@@ -208,7 +208,7 @@ function askAi() {
     </v-card>
   </div>
   <v-dialog v-model="dialog" fullscreen eager>
-    <v-card title="AI Feedback ✨" height="100%">
+    <v-card title="AI Feedback ✨" height="100%" :loading="aiStore.loading">
       <v-card-text id="markdown" :key="`${cacheAiFeedback}`"></v-card-text>
       <v-card-actions>
         <v-btn variant="tonal" size="large" block text="Close" @click="dialog = false"></v-btn>

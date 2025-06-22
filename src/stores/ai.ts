@@ -4,6 +4,7 @@ import * as smd from 'streaming-markdown'
 import { useExerciseLogsStore } from '@/stores/exerciseLogs'
 import { useUserProfileStore } from '@/stores/userProfile'
 import { localeDateString } from '@/services/dateUtils'
+import { ref } from 'vue'
 
 const config: GenerateContentConfig = {
   systemInstruction: `
@@ -31,6 +32,7 @@ Important:
 export const useAiStore = defineStore('ai', () => {
   const userProfileStore = useUserProfileStore()
   const exerciseLogsStore = useExerciseLogsStore()
+  const loading = ref(false)
 
   async function askAi() {
     if (!userProfileStore.userProfile.apiKey) {
@@ -66,11 +68,13 @@ export const useAiStore = defineStore('ai', () => {
 
     console.debug(contents)
 
+    loading.value = true
     const response = await ai.models.generateContentStream({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       contents,
       config,
     })
+    loading.value = false
 
     const element = document.getElementById('markdown')
     if (!element) return
@@ -80,5 +84,5 @@ export const useAiStore = defineStore('ai', () => {
       if (chunk.text) smd.parser_write(parser, chunk.text)
     }
   }
-  return { askAi }
+  return { askAi, loading }
 })
