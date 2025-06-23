@@ -26,21 +26,26 @@ function toggleTimer() {
 
 function playBeep() {
   // @ts-ignore
-  const context = new (window.AudioContext || window.webkitAudioContext)()
-  const oscillator = context.createOscillator()
-  const gainNode = context.createGain()
+  const context = new (window.AudioContext || window.webkitAudioContext)();
 
-  oscillator.type = 'sine' // Can be 'sine', 'square', 'triangle', or 'sawtooth'
-  oscillator.frequency.setValueAtTime(440, context.currentTime) // 440 Hz = A4 note
+  if (context.state === 'suspended') {
+    context.resume(); // Resume if needed
+  }
 
-  oscillator.connect(gainNode)
-  gainNode.connect(context.destination)
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
 
-  oscillator.start()
-  gainNode.gain.setValueAtTime(1, context.currentTime)
-  gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.2) // Fade out
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(440, context.currentTime);
 
-  oscillator.stop(context.currentTime + 0.2) // Stop after 0.2 seconds
+  oscillator.connect(gainNode);
+  gainNode.connect(context.destination);
+
+  oscillator.start();
+  gainNode.gain.setValueAtTime(1, context.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.2);
+
+  oscillator.stop(context.currentTime + 0.2);
 }
 
 watchEffect(() => {
