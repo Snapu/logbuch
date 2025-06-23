@@ -14,6 +14,7 @@ const formatedTime = computed(() => {
 })
 
 function toggleTimer() {
+  playBeep()
   if (timer.value) {
     clearInterval(timer.value)
     timer.value = null
