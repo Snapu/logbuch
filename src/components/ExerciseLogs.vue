@@ -5,6 +5,7 @@ import { useExercisesStore } from '@/stores/exercises'
 import { useAiStore } from '@/stores/ai'
 import router from '@/router'
 import { localeDateString } from '@/services/dateUtils'
+import StopWatch from './StopWatch.vue'
 
 const logsContainer = useTemplateRef('logs-container')
 const dialog = ref(false)
@@ -57,6 +58,8 @@ function deleteLog(log: ExerciseLog) {
   exerciseLogsStore.removeExerciseLog(log)
 }
 
+const formatNumber = (n: number) => new Intl.NumberFormat().format(n)
+
 onMounted(() => {
   setTimeout(() => scrollBottom(), 200)
 })
@@ -105,13 +108,13 @@ function askAi() {
                 class="my-2 mr-6"
               ></v-btn>
             </template>
-            <span class="mr-2"
+            <span class="mr-4"
               ><b>{{ log.exerciseName }}</b></span
             >
-            <span v-if="log.reps" class="mr-1">{{ log.reps }} x</span>
-            <span v-if="log.weight" class="mr-1">{{ log.weight }} kg</span>
-            <span v-if="log.distance" class="mr-1">{{ log.distance }} m</span>
-            <span v-if="log.duration" class="mr-1">{{ log.duration }} mins</span>
+            <span v-if="log.reps" class="mr-2">{{ formatNumber(log.reps) }} x</span>
+            <span v-if="log.weight" class="mr-2">{{ formatNumber(log.weight) }} kg</span>
+            <span v-if="log.distance" class="mr-2">{{ formatNumber(log.distance) }} m</span>
+            <span v-if="log.duration" class="mr-2">{{ formatNumber(log.duration) }} mins</span>
           </v-list-item>
         </v-list-group>
       </v-list>
@@ -148,6 +151,7 @@ function askAi() {
                 :items="exercisesStore.exercises.map(({ name }) => name)"
                 label="Exercise"
                 hide-details
+                clearable
               ></v-combobox>
             </v-col>
           </v-row>
@@ -159,6 +163,7 @@ function askAi() {
                 label="Reps"
                 suffix="x"
                 hide-details
+                clearable
               ></v-text-field>
             </v-col>
             <v-col>
@@ -168,6 +173,7 @@ function askAi() {
                 label="Weight in kg"
                 suffix="kg"
                 hide-details
+                clearable
               ></v-text-field>
             </v-col>
           </v-row>
@@ -179,6 +185,7 @@ function askAi() {
                 label="Distance in m"
                 suffix="m"
                 hide-details
+                clearable
               ></v-text-field>
             </v-col>
             <v-col>
@@ -188,6 +195,7 @@ function askAi() {
                 label="Duration in mins"
                 suffix="mins"
                 hide-details
+                clearable
               ></v-text-field>
             </v-col>
           </v-row>
@@ -206,9 +214,13 @@ function askAi() {
         >
       </v-card-actions>
     </v-card>
+    <StopWatch></StopWatch>
   </div>
   <v-dialog v-model="dialog" fullscreen eager>
-    <v-card title="AI Feedback ✨" height="100%" :loading="aiStore.loading">
+    <v-card title="AI Feedback ✨" height="100%">
+      <v-card-text v-if="aiStore.loading"
+        ><v-skeleton-loader type="article"></v-skeleton-loader
+      ></v-card-text>
       <v-card-text id="markdown" :key="`${cacheAiFeedback}`"></v-card-text>
       <v-card-actions>
         <v-btn variant="tonal" size="large" block text="Close" @click="dialog = false"></v-btn>
