@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-const totalSeconds = ref(0)
+const totalMs = ref(0)
+const startTimestamp = ref(Date.now())
 const timer = ref<ReturnType<typeof setInterval> | null>(null)
 const formatedTime = computed(() => {
+  const totalSeconds = Math.floor(totalMs.value / 1000)
   const duration = {
-    hours: Math.floor(totalSeconds.value / 3600),
-    minutes: Math.floor((totalSeconds.value % 3600) / 60),
-    seconds: totalSeconds.value % 60,
+    hours: Math.floor(totalSeconds / 3600),
+    minutes: Math.floor((totalSeconds % 3600) / 60),
+    seconds: totalSeconds % 60,
   }
   // @ts-ignore
   return new Intl.DurationFormat(undefined, { style: 'digital' }).format(duration)
@@ -17,9 +19,11 @@ function toggleTimer() {
   if (timer.value) {
     clearInterval(timer.value)
     timer.value = null
-    totalSeconds.value = 0
   } else {
-    timer.value = setInterval(() => totalSeconds.value++, 1000)
+    startTimestamp.value = Date.now()
+    timer.value = setInterval(() => {
+      totalMs.value = Date.now() - startTimestamp.value
+    }, 1000)
   }
 }
 </script>
