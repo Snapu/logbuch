@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref } from 'vue'
 
 const totalSeconds = ref(0)
 const timer = ref<ReturnType<typeof setInterval> | null>(null)
@@ -14,7 +14,6 @@ const formatedTime = computed(() => {
 })
 
 function toggleTimer() {
-  playBeep()
   if (timer.value) {
     clearInterval(timer.value)
     timer.value = null
@@ -23,34 +22,6 @@ function toggleTimer() {
     timer.value = setInterval(() => totalSeconds.value++, 1000)
   }
 }
-
-function playBeep() {
-  // @ts-ignore
-  const context = new (window.AudioContext || window.webkitAudioContext)();
-
-  if (context.state === 'suspended') {
-    context.resume(); // Resume if needed
-  }
-
-  const oscillator = context.createOscillator();
-  const gainNode = context.createGain();
-
-  oscillator.type = 'sine';
-  oscillator.frequency.setValueAtTime(440, context.currentTime);
-
-  oscillator.connect(gainNode);
-  gainNode.connect(context.destination);
-
-  oscillator.start();
-  gainNode.gain.setValueAtTime(1, context.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.2);
-
-  oscillator.stop(context.currentTime + 0.2);
-}
-
-watchEffect(() => {
-  if (totalSeconds.value !== 0 && totalSeconds.value % 30 === 0) playBeep()
-})
 </script>
 
 <template>
